@@ -11,13 +11,15 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.*;
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.newdawn.fizzy.Body;
+import org.newdawn.fizzy.Circle;
 /**
  *
  * @author Piotrek
  */
 public class Entity {
     private Shape model;
-    protected Vector2f _position;
+    private Body body;
     protected float _turnSpeed = 0.381f;
     protected float _direction = 0;
     protected float _rotation = 0;
@@ -32,11 +34,22 @@ public class Entity {
         //System.out.println("Entity created");
         
     }
+
     public Shape getModel(){
         return model;
     }
     public void Kill(){
         killed = true;
+        
+    }
+    public float getX(){
+        return 0;
+    }
+    public float getY(){
+        return 0;
+    }
+    public Body getBody(){
+        return body;
     }
     public void DrawDebug(Shape model,Graphics g){
         

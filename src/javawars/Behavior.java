@@ -15,4 +15,16 @@ public class Behavior {
     public Vector2f CalculateVelocity(Entity entity, int delta){
         return entity._velocity;
     }
+    public float WrapAngle(float radians)
+        {
+            while (radians < -Math.PI)
+            {
+                radians += Math.PI*2;
+            }
+            while (radians > Math.PI)
+            {
+                radians -= Math.PI;
+            }
+            return radians;
+        }
 }

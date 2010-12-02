@@ -19,15 +19,20 @@ public class Follow extends Behavior{
 
     }
     public Vector2f CalculateVelocity(Entity entity, int delta){
-        Vector2f velocity = entity._velocity;
-        Vector2f direction = new Vector2f(_target._position.x,_target._position.y);
-        direction.sub(entity._position);
-        //velocity = new Vector2f(Math.toDegrees(Math.atan2(entity._position.x-_target._position.x, entity._position.y-_target._position.y)));
+        Vector2f velocity = new Vector2f(0,0);
+        Vector2f direction = new Vector2f(entity.getX()-_target.getX(),entity.getX()-_target.getX());
+        
+        direction.normalise();
+        //Vector2f dir = new Vector2f(0,0);
+        //dir.setTheta(angle);
+        //velocity = new Vector2f(Math.toDegrees(Math.atan2(entity.getX()-_target.getX(), entity.getY()-_target.getY())));
+        //velocity.setTheta(angle);
         velocity.x = direction.x*delta*entity._acceleration;
         velocity.y = direction.y*delta*entity._acceleration;
+        
         //System.out.println(velocity);
         //velocity.y = _target._position.y;
-        return velocity.scale(_weight);
+        return velocity;
 
     }
 }

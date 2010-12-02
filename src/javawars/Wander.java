@@ -17,20 +17,20 @@ public class Wander extends Behavior{
         _weight = 2f;
         randX = Math.random()*360;
         randY = Math.random()*360;
-        randChange = Math.random()*10;
+        randChange = Math.random()*7;
         
     }
     public Vector2f CalculateVelocity(Entity entity, int delta){
-        Vector2f velocity = new Vector2f(entity._velocity.x,entity._velocity.y);
+        Vector2f velocity = new Vector2f(entity.getBody().getXVelocity(),entity.getBody().getXVelocity());
         if (lastChange/1000 >= randChange){
             randX = Math.random()*360;
             randY = Math.random()*360;
             lastChange = 0;
         }
-        velocity.x += (float)Math.cos(Math.toRadians(randX));
-        velocity.y += (float)Math.sin(Math.toRadians(randY));
+        velocity.x = (float)Math.cos(Math.toRadians(randX));
+        velocity.y = (float)Math.sin(Math.toRadians(randY));
         lastChange += delta;
-        return velocity.normalise().scale(_weight);
+        return velocity.normalise();
         
     }
 }
