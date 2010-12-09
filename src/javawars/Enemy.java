@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import org.newdawn.fizzy.Body;
 import org.newdawn.fizzy.Circle;
+import java.util.Random;
 /**
  *
  * @author Piotrek
@@ -21,11 +22,11 @@ public class Enemy extends Entity{
     private Body body;
     private Game _game;
     private Image _image;
-    public Enemy(float x, float y,Game game){
-        _acceleration = 0.0005f;
+    public Enemy(float x, float y,Game game,String texture){
         _game = game;
+        
         try{
-            _image = new Image("resources/enemy.png");
+            _image = new Image(texture);
         } catch (org.newdawn.slick.SlickException error){
 
         }
@@ -33,58 +34,23 @@ public class Enemy extends Entity{
          body.setUserData("enemy");
          body.setFriction(0);
          body.setRestitution(0);
+         body.setDensity(10);
          game.world.add(body);
-        _behaviors.add(new Follow(game.player));
-        _maxSpeed = 12f;
+         _behaviors.add(new Follow(game.player));
+         _behaviors.add(new Wander());
+        Random rand = new Random();
+        _maxSpeed = 74f;
+        //wylosuj dodatkowo prędkość, zeby zroznicowac przeciwnikow
+        _maxSpeed += rand.nextInt(10);
+
+
         color = Color.blue;
 
     }
-    /*
-    public void Collide(LinkedList entities){
-        Iterator iterator = entities.iterator();
-        while(iterator.hasNext()){
-            Enemy en = (Enemy)iterator.next();
-            if (en == this)
-                continue;
-            if (body.isTouching(en.getBody())){
-            //if (_position.distance(en._position) <= 2.4f*en.model.radius){
-            //if (this.model.intersects(en.getModel())){
-            
-                //en.color = Color.red;
-                //this.color = Color.orange;
-                
-
-              
-                Vector2f dist = new Vector2f(en.getX()-this.getX(),en.getY()-this.getY());
-                float waga = (1-(dist.length()/4*en.getModel().radius));
-                //waga = (float)Math.pow((double)waga, 2);
-                //dist.normalise();
-                dist.scale(waga);
-                dist.normalise();
-                dist.scale(1.1f);
-                this._position.add(dist);
-                this._velocity.add(dist);
-                //dist.scale(-1);
-                //en._position.add(dist);
-            }
-            if (_position.distance(en._position) <= 2*en.model.radius){
-                if (en.getX() < this.getX()){
-                    this._position.x += (2*this.getModel().radius)-_position.distance(en._position)+0.5f;
-                }
-
-            }
-            //if (model.intersects(en.getModel())){
-            //    en.color = Color.red;
-            //}
-        }
-
-    }
-     */
     @Override
     public void Kill(){
         killed = true;
-        //_game.world.remove(body);
-        _game.removedEnemies.add(this);
+        _game.addToRemoval(this);
     }
     @Override
     public float getX(){
@@ -107,21 +73,21 @@ public class Enemy extends Entity{
         Vector2f temp = new Vector2f(0,0);
         //iteruj przez wszystkie zachowania i modyfikuj Predkosc
         while(iterator.hasNext()){
-            Vector2f v = ((Behavior)iterator.next()).CalculateVelocity((Entity)this,delta);
-            temp.x = v.x;
-            temp.y = v.y;
+            Behavior be = (Behavior)iterator.next();
+            Vector2f v = be.CalculateVelocity((Entity)this,delta);
+
+            temp.x += v.x;
+            temp.y += v.y;
+            //nie licz dalszych zachowan jesli jedno sie spelnilo
+            if (be.reacted)
+                break;
         }
-        temp.x *= delta*_maxSpeed;
-        temp.y *= delta*_maxSpeed;
-        //velocity.x += delta*(((float)Math.cos(Math.toRadians(Math.random()*360)) * entity._maxSpeed) - velocity.x) * entity._acceleration;
         
         if (temp.x > _maxSpeed)
             temp.x = _maxSpeed;
         if (temp.y > _maxSpeed)
             temp.y = _maxSpeed;
-        //_position.x += temp.x;
-        //_position.y += temp.y;
-        body.setVelocity(3, 4);
+        body.setVelocity(temp.x, temp.y);
         
     }
     public void Draw(Graphics g){
@@ -141,7 +107,7 @@ public class Enemy extends Entity{
             //g.draw(model.transform(Transform.createRotateTransform((float)Math.toRadians((double)_rotation),_position.x,_position.y)));
             //g.draw(model);
             int width = (int)((Circle)body.getShape()).getRadius()*2;
-            _image = _image.getScaledCopy(width,width);
+            //_image = _image.getScaledCopy(width,width);
             
 
             g.drawImage(_image, body.getX(), body.getY());

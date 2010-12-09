@@ -26,12 +26,9 @@ public class Entity {
     protected float _maxSpeed = 7f;
     protected Vector2f _velocity = new Vector2f(0,0);
     protected LinkedList _behaviors = new LinkedList();
-    protected float _acceleration = 0.0011f;
-    protected float _deceleration = 0.001f;
     protected Color color = Color.blue;
     protected boolean killed = false;
     public Entity(){
-        //System.out.println("Entity created");
         
     }
 

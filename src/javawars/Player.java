@@ -31,8 +31,9 @@ public class Player extends Entity {
     private Body body;
     private ParticleSystem thrustSystem,shootingSystem;
     public Game _game;
+    private int _lifes;
     private float tempAngle;
-    private Weapon weapon;
+    private Weapon weapon,weapon2;
     public LinkedList bullets;
     //kierunek w ktorym bedzie oddany strzal
     //wyliczane na podstawie roznicy wektorow pozycji gracza i myszki
@@ -41,19 +42,21 @@ public class Player extends Entity {
     ConfigurableEmitter thrust,cannon;
     public Player(float x, float y, Game game){
         _game = game;
+        //liczba zyc
+        _lifes = 3;
         body = new Body(new Circle(38),x,y,false);
-        weapon = new BasicWeapon(game,"resources/thrust.jpg");
+        weapon = new Shotgun(game,"resources/thrust.jpg");
+        weapon2 = new BlastWave(game,"resources/thrust.jpg");
         bullets = new LinkedList();
         body.setFriction(0.01f);
         body.setRestitution(0);
         game.world.add(body);
         aim = new Vector2f(0,0);
         //body.setPosition(x, y);
-        _acceleration = 0.6f;
-        _deceleration = 0.1f;
-        _maxSpeed = 40f;
+        _maxSpeed = 180f;
+        _turnSpeed = 0.5f;
         try{
-            obrazek = new Image("hawk.png");
+            obrazek = new Image("resources/hawk.png");
         } catch(org.newdawn.slick.SlickException error){
             //nie rob nic, jak zawsze
         }
@@ -103,6 +106,9 @@ public class Player extends Entity {
     public float getY(){
         return body.getY();
     }
+    public Vector2f getPosition(){
+        return new Vector2f(body.getX(),body.getY());
+    }
     public Body getBody(){
         return body;
     }
@@ -127,7 +133,7 @@ public class Player extends Entity {
             _velocity.y = ((float)Math.sin(Math.toRadians((float)_direction-90)));
             _velocity.normalise();
             _velocity.scale(_maxSpeed);
-            _velocity.scale(delta);
+            //_velocity.scale(delta);
             body.setVelocity(_velocity.x, _velocity.y);
             thrust.setEnabled(true);
         } else {
@@ -146,17 +152,20 @@ public class Player extends Entity {
         aim.normalise();
         double alfa = aim.getTheta();
         cannon.angularOffset.setValue((float)alfa+90f);
-
-        if (input.isMouseButtonDown(0) || input.isMouseButtonDown(1)){
+        if (input.isMouseButtonDown(1)){
+            weapon2.Fire(this, aim);
+        }
+        if (input.isMouseButtonDown(0)){
            weapon.Fire(this,aim);
 
 
-            shootingSystem.getEmitter(0).setEnabled(true);
+            //shootingSystem.getEmitter(0).setEnabled(true);
             //shootingSystem.get
         } else{
            shootingSystem.getEmitter(0).setEnabled(false);
         }
         weapon.Update(gc, delta);
+        weapon2.Update(gc, delta);
         //atualizuj pozycje pocisków
         Iterator iterator = bullets.iterator();
         while(iterator.hasNext()){

@@ -11,7 +11,7 @@ import org.newdawn.slick.geom.*;
  */
 public class Behavior {
     protected float _weight = 10;
-    
+    public boolean reacted = false;
     public Vector2f CalculateVelocity(Entity entity, int delta){
         return entity._velocity;
     }

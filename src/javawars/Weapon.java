@@ -25,7 +25,19 @@ abstract class Weapon {
         reloadTime = 100; //czas w milisekundach
         bullets = new LinkedList();
     }
+    static Vector2f rotate(Vector2f v, float degrees){
+
+	float c = (float) Math.cos(Math.toRadians(degrees));
+	float s = (float) Math.sin(Math.toRadians(degrees));
+        float rx = v.x*c-v.y*s;
+        float ry = v.x*s+v.y*c;
+        v.x = rx;
+	v.y = ry;
+
+        return v;
+    }
     abstract void Fire(Player player, Vector2f direction);
-    abstract void Update(GameContainer gc, int delta);
-    abstract void Collide(LinkedList entities);
+    public void Update(GameContainer gc, int delta){
+        lastShot += delta;
+    }
 }
